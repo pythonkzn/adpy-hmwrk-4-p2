@@ -59,15 +59,55 @@ class PhoneBook:
                 buf_list.append(output_data)
                 json.dump(buf_list, outfile)
 
+    def in_com_p(self):
+        with open('contacts.json', 'r', encoding='utf8') as file:
+            data_print = json.load(file)
+            for contact in data_print:
+                print('***')
+                print(Contact(contact['Name'], contact['Surname'], contact['Phone_num'],
+                              contact['Fav'], *contact['Add info'], **contact['Add info 2']))
+
+    def in_com_d(self):
+        num_del = input('Введите номер телефона контакт которого Вы хотите удалить:  ')
+        with open('contacts.json', 'r', encoding='utf8') as file:
+            data = json.load(file)
+            i = 0
+            for contact in data:
+                if contact['Phone_num'] == num_del:
+                    data.pop(i)
+                i += 1
+        with open('contacts.json', 'w', encoding='utf8') as file:
+            json.dump(data, file, ensure_ascii=False)
+            return data
+
+    def in_com_pf(self):
+        with open('contacts.json', 'r', encoding='utf8') as file:
+            data = json.load(file)
+            i = 0
+            for contact in data:
+                if contact['Fav'] == '1':
+                    print(Contact(contact['Name'], contact['Surname'], contact['Phone_num'],
+                              contact['Fav'], *contact['Add info'], **contact['Add info 2']))
+                i += 1
+
+    def in_com_fio(self):
+        in_name = input('Введите имя ')
+        in_surname = input('Введите фамилию ')
+        with open('contacts.json', 'r', encoding='utf8') as file:
+            data = json.load(file)
+            i = 0
+            for contact in data:
+                if (contact['Name'] == in_name) and (contact['Surname'] == in_surname):
+                    print(Contact(contact['Name'], contact['Surname'], contact['Phone_num'],
+                              contact['Fav'], *contact['Add info'], **contact['Add info 2']))
+                i += 1
 
 def in_com_a():  # функция автоматизирующая ввод данных контакта
     in_name = input('Введите имя  ')
     in_surname = input('Введите фамилию  ')
     in_phone_num = input('Введите Номер телефона  ')
     in_fav = input('Введите  1 если избранный контакт, и 2 - если обычный  ')
-
     key = ''
-    ad_dict = {}
     in_key_list = []
     in_value_list = []
     while key != 'Q':
@@ -86,39 +126,25 @@ def in_com_a():  # функция автоматизирующая ввод да
     return [in_name, in_surname, in_phone_num, in_fav, ad_list, ad_dict]
 
 
-def in_com_p():
-    with open('contacts.json', 'r', encoding='utf8') as file:
-        data_print = json.load(file)
-        return data_print
-
-def in_com_d():
-    num_del = input('Введите номер телефона контакт которого Вы хотите удалить:  ')
-    with open('contacts.json', 'r', encoding='utf8') as file:
-        data = json.load(file)
-        i = 0
-        for contact in data:
-            if contact['Phone_num'] == num_del:
-                data.pop(i)
-            i += 1
-    with open('contacts.json', 'w', encoding='utf8') as file:
-        json.dump(data, file, ensure_ascii=False)
-        return data
 
 def main():
-    #john = Contact('Jhon', 'Smith', '+71234567809', telegram='@jhony', email='jhony@smith.com')
-    in_com = input('Введите команду: 1) A - для добавления контакта 2) P - для вывода контактов из книги 3) D - для удаления контакта 4) P - для поиска контакта  ')
+    phone_book_1 = PhoneBook('phone_book_1')  # создали телефонную книгу
+    in_com = input('Введите команду: 1) A - для добавления контакта 2) P - для вывода контактов из книги '
+                   '3) D - для удаления контакта 4) PF - для выдачи всех избранных номеров  '
+                   '5)FIO - для поиска по имени и фамилии ')
     if in_com == 'A':
         contact_info = in_com_a()
         new_contact = Contact(contact_info[0], contact_info[1],contact_info[2], contact_info[3], *contact_info[4], **contact_info[5])
-        print(new_contact)
-        phone_book_1 = PhoneBook('phone_book_1')
         phone_book_1.add_contact(new_contact)
+        print(new_contact)
     elif in_com == 'P':
-        out_info = in_com_p()
-        print(out_info)
+        print(phone_book_1.in_com_p())
     elif in_com == 'D':
-        out_info = in_com_d()
-        print(out_info)
+        phone_book_1.in_com_d()
+    elif in_com == 'PF':
+        phone_book_1.in_com_pf()
+    elif in_com == 'FIO':
+        phone_book_1.in_com_fio()
 
 
 if __name__ == "__main__":
