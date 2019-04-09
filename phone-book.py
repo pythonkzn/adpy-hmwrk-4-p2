@@ -1,4 +1,6 @@
 import json
+import os
+
 
 class Contact:
     def __init__(self, name, surname, phone_num, fav=False, *args, **kwargs):
@@ -43,13 +45,19 @@ class PhoneBook:
                        'Fav': contact.fav,
                        'Add info': contact.args,
                        'Add info 2': contact.kwargs}
-        with open('contacts.json', 'a', encoding='utf8') as file:
-            json.dump(output_data, file, ensure_ascii=False)
-
-
-    #def get_contacts(self):
-    #    for item in self.contact_list:
-    #        print(item)
+        fname = 'contacts.json'
+        if os.path.isfile(fname):
+            with open(fname,'ab+') as outfile:
+                outfile.seek(-1, os.SEEK_END)
+                outfile.truncate()
+                outfile.write(','.encode())
+                outfile.write(json.dumps(output_data).encode())
+                outfile.write(']'.encode())
+        else:
+            with open(fname, 'w') as outfile:
+                buf_list = []
+                buf_list.append(output_data)
+                json.dump(buf_list, outfile)
 
 
 def in_com_a():  # функция автоматизирующая ввод данных контакта
@@ -77,6 +85,14 @@ def in_com_a():  # функция автоматизирующая ввод да
         key = input('Введите Q чтобы закончить ввод дополнительной информации ')
     return [in_name, in_surname, in_phone_num, in_fav, ad_list, ad_dict]
 
+
+def in_com_p():
+    with open('contacts.json', 'r', encoding='utf8') as file:
+        data_print = json.load(file)
+        return data_print
+
+
+
 def main():
     #john = Contact('Jhon', 'Smith', '+71234567809', telegram='@jhony', email='jhony@smith.com')
     in_com = input('Введите команду: 1) A - для добавления контакта 2) P - для вывода контактов из книги 3) D - для удаления контакта 4) P - для поиска контакта  ')
@@ -86,7 +102,9 @@ def main():
         print(new_contact)
         phone_book_1 = PhoneBook('phone_book_1')
         phone_book_1.add_contact(new_contact)
-
+    elif in_com == 'P':
+        out_info = in_com_p()
+        print(out_info)
 
 
 if __name__ == "__main__":
