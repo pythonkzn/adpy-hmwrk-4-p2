@@ -91,7 +91,18 @@ def in_com_p():
         data_print = json.load(file)
         return data_print
 
-
+def in_com_d():
+    num_del = input('Введите номер телефона контакт которого Вы хотите удалить:  ')
+    with open('contacts.json', 'r', encoding='utf8') as file:
+        data = json.load(file)
+        i = 0
+        for contact in data:
+            if contact['Phone_num'] == num_del:
+                data.pop(i)
+            i += 1
+    with open('contacts.json', 'w', encoding='utf8') as file:
+        json.dump(data, file, ensure_ascii=False)
+        return data
 
 def main():
     #john = Contact('Jhon', 'Smith', '+71234567809', telegram='@jhony', email='jhony@smith.com')
@@ -104,6 +115,9 @@ def main():
         phone_book_1.add_contact(new_contact)
     elif in_com == 'P':
         out_info = in_com_p()
+        print(out_info)
+    elif in_com == 'D':
+        out_info = in_com_d()
         print(out_info)
 
 
